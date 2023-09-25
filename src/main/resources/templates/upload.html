@@ -1,16 +1,42 @@
+<!DOCTYPE html>
 <html lang="ko">
-    <body>
-        <a href="/download"> <--  다운로드 페이지로 </a>
-        <h2> 파일 업로드 </h2>
-        <span>파일 업로드 코드를 작성하십시오.</span>
-        <span>파일을 업로드하는 예제에 대해서는 <a href="https://github.com/java-lesson-cbnu/android-lesson-01">이전 예제 레포지토리</a>를 참고하세요. </span>
-        <span id="message"> </span>
-    </body>
-    <script>
+<head>
+    <title>파일 업로드</title>
+</head>
+<body>
+<a href="/download"> <--  다운로드 페이지로 </a>
+<h2> 파일 업로드 </h2>
+<span>파일 업로드 코드를 작성하십시오.</span>
+<span>파일을 업로드하는 예제에 대해서는 <a href="https://github.com/java-lesson-cbnu/android-lesson-01">이전 예제 레포지토리</a>를 참고하세요. </span>
+<span id="message"> </span>
 
-        let params = new URLSearchParams(window.location.search);
-        if (params.get("success") != null) {
-            document.getElementById("message").innerHTML = "파일 업로드에 성공하였습니다.";
+<form id="uploadForm" enctype="multipart/form-data">
+    <input type="file" name="file" id="fileInput" />
+    <input type="button" value="파일 업로드" id="uploadButton" />
+</form>
+
+<script>
+    document.getElementById("uploadButton").addEventListener("click", async function() {
+        const fileInput = document.getElementById("fileInput");
+        const formData = new FormData();
+        formData.append("file", fileInput.files[0]);
+
+        try {
+            const response = await fetch("/api/v1/rest/aws/upload", {
+                method: "POST",
+                body: formData
+            });
+            if (response.ok) {
+                document.getElementById("message").innerHTML = "파일 업로드에 성공하였습니다.";
+            } else {
+                document.getElementById("message").innerHTML = "파일 업로드에 실패하였습니다.";
+            }
+        } catch (error) {
+            console.error("파일 업로드 오류:", error);
+            document.getElementById("message").innerHTML = "파일 업로드 중 오류가 발생하였습니다.";
         }
-    </script>
+    });
+
+</script>
+</body>
 </html>
